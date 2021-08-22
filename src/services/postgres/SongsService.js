@@ -11,6 +11,7 @@ class SongsService {
     this.getSongs = this.getSongs.bind(this);
     this.getSongById = this.getSongById.bind(this);
     this.updateSongById = this.updateSongById.bind(this);
+    this.deleteSongById = this.deleteSongById.bind(this);
   }
 
   async addSong({ title, year, performer, genre, duration }) {
@@ -76,6 +77,19 @@ class SongsService {
 
     if (!rowCount) {
       throw new NotFoundError('Failed when updating song. Song Id not found');
+    }
+  }
+
+  async deleteSongById(id) {
+    const query = {
+      text: 'DELETE FROM songs WHERE id = $1',
+      values: [id],
+    };
+
+    const { rowCount } = await this._pool.query(query);
+
+    if (!rowCount) {
+      throw new NotFoundError('Error when deleting song. Song Id not found');
     }
   }
 }
