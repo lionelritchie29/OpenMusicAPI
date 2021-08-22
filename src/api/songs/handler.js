@@ -1,4 +1,6 @@
 const ClientError = require('../../exceptions/ClientError');
+const ResponseCreator = require('../../utils/ResponseCreator');
+const ResponseMessage = require('../../utils/ResponseMessage');
 
 class SongsService {
   constructor(service, validator) {
@@ -14,31 +16,29 @@ class SongsService {
       this._validator.validate(request.payload);
       const id = await this._service.addSong(request.payload);
 
-      const response = h.response({
-        status: 'success',
-        message: 'Song added succesfully',
-        data: {
-          songId: id,
-        },
-      });
-      response.code(201);
-      return response;
+      const data = { songId: id };
+      return ResponseCreator.createResponseWithMessageAndData(
+        h,
+        ResponseMessage.success,
+        'Song added succesfully',
+        data,
+      );
     } catch (error) {
       if (error instanceof ClientError) {
-        const response = h.response({
-          status: 'fail',
-          message: error.message,
-        });
-        response.code(error.statusCode);
-        return response;
+        return ResponseCreator.createResponseWithMessage(
+          h,
+          ResponseMessage.fail,
+          error.message,
+          error.statusCode,
+        );
       }
 
-      const response = h.response({
-        status: 'fail',
-        message: error.message,
-      });
-      response.code(500);
-      return response;
+      return ResponseCreator.createResponseWithMessage(
+        h,
+        ResponseMessage.error,
+        error.message,
+        500,
+      );
     }
   }
 }
