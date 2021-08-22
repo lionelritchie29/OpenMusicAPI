@@ -10,6 +10,7 @@ class SongsService {
     this.postSongHandler = this.postSongHandler.bind(this);
     this.getSongsHandler = this.getSongsHandler.bind(this);
     this.getSongByIdHandler = this.getSongByIdHandler.bind(this);
+    this.putSongByIdHandler = this.putSongByIdHandler.bind(this);
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -48,6 +49,22 @@ class SongsService {
         {
           song,
         },
+      );
+    } catch (error) {
+      return ErrorHandler.handleError(h, error);
+    }
+  }
+
+  async putSongByIdHandler(request, h) {
+    try {
+      this._validator.validate(request.payload);
+      const { songId } = request.params;
+      await this._service.updateSongById(songId, request.payload);
+
+      return ResponseCreator.createResponseWithMessage(
+        h,
+        ResponseMessage.success,
+        'Song updated succesfully',
       );
     } catch (error) {
       return ErrorHandler.handleError(h, error);
