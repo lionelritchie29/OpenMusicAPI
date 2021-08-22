@@ -37,6 +37,14 @@ class SongsService {
 
     return rows[0].id;
   }
+
+  async getSongs() {
+    const { rows } = await this._pool.query('SELECT * FROM songs');
+    return rows.map((row) => {
+      const { id, title, performer } = row;
+      return { id, title, performer };
+    });
+  }
 }
 
 module.exports = SongsService;

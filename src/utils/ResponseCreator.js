@@ -1,5 +1,5 @@
 const ResponseCreator = {
-  createResponseWithMessage: (h, status, message, statusCode = 201) => {
+  createResponseWithMessage: (h, status, message, statusCode = 200) => {
     const response = h.response({
       status,
       message,
@@ -8,7 +8,7 @@ const ResponseCreator = {
     return response;
   },
 
-  createResponseWithData: (h, status, data, statusCode = 201) => {
+  createResponseWithData: (h, status, data, statusCode = 200) => {
     const response = h.response({
       status,
       data,
@@ -22,7 +22,7 @@ const ResponseCreator = {
     status,
     message,
     data,
-    statusCode = 201,
+    statusCode = 200,
   ) => {
     const response = h.response({
       status,
