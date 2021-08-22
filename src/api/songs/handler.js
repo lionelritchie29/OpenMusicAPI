@@ -1,4 +1,4 @@
-const ClientError = require('../../exceptions/ClientError');
+const ErrorHandler = require('../../utils/ErrorHandler');
 const ResponseCreator = require('../../utils/ResponseCreator');
 const ResponseMessage = require('../../utils/ResponseMessage');
 
@@ -9,6 +9,7 @@ class SongsService {
 
     this.postSongHandler = this.postSongHandler.bind(this);
     this.getSongsHandler = this.getSongsHandler.bind(this);
+    this.getSongByIdHandler = this.getSongByIdHandler.bind(this);
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -26,21 +27,7 @@ class SongsService {
         201,
       );
     } catch (error) {
-      if (error instanceof ClientError) {
-        return ResponseCreator.createResponseWithMessage(
-          h,
-          ResponseMessage.fail,
-          error.message,
-          error.statusCode,
-        );
-      }
-
-      return ResponseCreator.createResponseWithMessage(
-        h,
-        ResponseMessage.error,
-        error.message,
-        500,
-      );
+      return ErrorHandler.handleError(h, error);
     }
   }
 
@@ -49,6 +36,22 @@ class SongsService {
     return ResponseCreator.createResponseWithData(h, ResponseMessage.success, {
       songs,
     });
+  }
+
+  async getSongByIdHandler(request, h) {
+    try {
+      const { songId } = request.params;
+      const song = await this._service.getSongById(songId);
+      return ResponseCreator.createResponseWithData(
+        h,
+        ResponseMessage.success,
+        {
+          song,
+        },
+      );
+    } catch (error) {
+      return ErrorHandler.handleError(h, error);
+    }
   }
 }
 
