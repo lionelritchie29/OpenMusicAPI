@@ -15,10 +15,10 @@ class SongsService {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  async postSongHandler(request, h) {
+  async postSongHandler({ payload }, h) {
     try {
-      this._validator.validate(request.payload);
-      const id = await this._service.addSong(request.payload);
+      this._validator.validate(payload);
+      const id = await this._service.addSong(payload);
 
       const data = { songId: id };
       return ResponseCreator.createResponseWithMessageAndData(
@@ -40,9 +40,9 @@ class SongsService {
     });
   }
 
-  async getSongByIdHandler(request, h) {
+  async getSongByIdHandler({ params }, h) {
     try {
-      const { songId } = request.params;
+      const { songId } = params;
       const song = await this._service.getSongById(songId);
       return ResponseCreator.createResponseWithData(
         h,
@@ -56,11 +56,11 @@ class SongsService {
     }
   }
 
-  async putSongByIdHandler(request, h) {
+  async putSongByIdHandler({ payload, params }, h) {
     try {
-      this._validator.validate(request.payload);
-      const { songId } = request.params;
-      await this._service.updateSongById(songId, request.payload);
+      this._validator.validate(payload);
+      const { songId } = params;
+      await this._service.updateSongById(songId, payload);
 
       return ResponseCreator.createResponseWithMessage(
         h,
@@ -72,9 +72,9 @@ class SongsService {
     }
   }
 
-  async deleteSongByIdHandler(request, h) {
+  async deleteSongByIdHandler({ params }, h) {
     try {
-      const { songId } = request.params;
+      const { songId } = params;
       await this._service.deleteSongById(songId);
       return ResponseCreator.createResponseWithMessage(
         h,
