@@ -1,7 +1,7 @@
 {
   "name": "open_music_api",
   "version": "1.0.0",
-  "description": "Open Music API Version 1 for Dicoding Submission",
+  "description": "Open Music API for Dicoding Submission",
   "main": "index.js",
   "dependencies": {
     "@hapi/hapi": "^20.1.5",
