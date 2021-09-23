@@ -1,5 +1,6 @@
 const { nanoid } = require('nanoid');
 const { Pool } = require('pg');
+const bcrypt = require('bcrypt');
 const BadRequestError = require('../../exceptions/BadRequestError');
 
 class UsersService {
@@ -11,9 +12,10 @@ class UsersService {
     await this._verifyUsername(username);
 
     const id = `user-${nanoid()}`;
+    const hashedPassword = await bcrypt.hash(password, 10);
     const query = {
       text: 'INSERT INTO users VALUES($1, $2, $3, $4) RETURNING id',
-      values: [id, username, password, fullname],
+      values: [id, username, hashedPassword, fullname],
     };
 
     const { rows } = await this._pool.query(query);
