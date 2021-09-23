@@ -1,4 +1,3 @@
-const ErrorHandler = require('../../utils/ErrorHandler');
 const ResponseCreator = require('../../utils/ResponseCreator');
 const ResponseMessage = require('../../utils/ResponseMessage');
 
@@ -16,21 +15,17 @@ class SongsService {
 
   // eslint-disable-next-line class-methods-use-this
   async postSongHandler({ payload }, h) {
-    try {
-      this._validator.validate(payload);
-      const id = await this._service.addSong(payload);
+    this._validator.validate(payload);
+    const id = await this._service.addSong(payload);
 
-      const data = { songId: id };
-      return ResponseCreator.createResponseWithMessageAndData(
-        h,
-        ResponseMessage.success,
-        'Song added succesfully',
-        data,
-        201,
-      );
-    } catch (error) {
-      return ErrorHandler.handleError(h, error);
-    }
+    const data = { songId: id };
+    return ResponseCreator.createResponseWithMessageAndData(
+      h,
+      ResponseMessage.success,
+      'Song added succesfully',
+      data,
+      201,
+    );
   }
 
   async getSongsHandler(_, h) {
@@ -41,49 +36,33 @@ class SongsService {
   }
 
   async getSongByIdHandler({ params }, h) {
-    try {
-      const { songId } = params;
-      const song = await this._service.getSongById(songId);
-      return ResponseCreator.createResponseWithData(
-        h,
-        ResponseMessage.success,
-        {
-          song,
-        },
-      );
-    } catch (error) {
-      return ErrorHandler.handleError(h, error);
-    }
+    const { songId } = params;
+    const song = await this._service.getSongById(songId);
+    return ResponseCreator.createResponseWithData(h, ResponseMessage.success, {
+      song,
+    });
   }
 
   async putSongByIdHandler({ payload, params }, h) {
-    try {
-      this._validator.validate(payload);
-      const { songId } = params;
-      await this._service.updateSongById(songId, payload);
+    this._validator.validate(payload);
+    const { songId } = params;
+    await this._service.updateSongById(songId, payload);
 
-      return ResponseCreator.createResponseWithMessage(
-        h,
-        ResponseMessage.success,
-        'Song updated succesfully',
-      );
-    } catch (error) {
-      return ErrorHandler.handleError(h, error);
-    }
+    return ResponseCreator.createResponseWithMessage(
+      h,
+      ResponseMessage.success,
+      'Song updated succesfully',
+    );
   }
 
   async deleteSongByIdHandler({ params }, h) {
-    try {
-      const { songId } = params;
-      await this._service.deleteSongById(songId);
-      return ResponseCreator.createResponseWithMessage(
-        h,
-        ResponseMessage.success,
-        'Song deleted succesfully',
-      );
-    } catch (error) {
-      return ErrorHandler.handleError(h, error);
-    }
+    const { songId } = params;
+    await this._service.deleteSongById(songId);
+    return ResponseCreator.createResponseWithMessage(
+      h,
+      ResponseMessage.success,
+      'Song deleted succesfully',
+    );
   }
 }
 

@@ -3,6 +3,7 @@ const Hapi = require('@hapi/hapi');
 
 const songsPlugin = require('./api/songs');
 const SongsService = require('./services/postgres/SongsService');
+const ErrorHandler = require('./utils/ErrorHandler');
 const SongsValidator = require('./validators/songs');
 
 const init = async () => {
@@ -14,6 +15,16 @@ const init = async () => {
         origin: ['*'],
       },
     },
+  });
+
+  server.ext('onPreResponse', (request, h) => {
+    const { response } = request;
+
+    if (response instanceof Error) {
+      return ErrorHandler.handleError(h, response);
+    }
+
+    return response.continue || response;
   });
 
   await server.register({
