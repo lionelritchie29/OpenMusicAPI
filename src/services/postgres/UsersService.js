@@ -2,6 +2,7 @@ const { nanoid } = require('nanoid');
 const { Pool } = require('pg');
 const bcrypt = require('bcrypt');
 const BadRequestError = require('../../exceptions/BadRequestError');
+const AuthenticationError = require('../../exceptions/AuthenticationError');
 
 class UsersService {
   constructor() {
@@ -37,6 +38,28 @@ class UsersService {
     if (result.rowCount > 0) {
       throw new BadRequestError('Username already exists');
     }
+  }
+
+  async verifyUserCredential({ username, password }) {
+    const query = {
+      text: 'SELECT id, password FROM users WHERE username = $1',
+      values: [username],
+    };
+
+    const { rows } = await this._pool.query(query);
+
+    if (!rows.length) {
+      throw new AuthenticationError('Invalid username or password');
+    }
+
+    const { id, password: hashedPassword } = rows[0];
+    const passwordMatch = await bcrypt.compare(password, hashedPassword);
+
+    if (!passwordMatch) {
+      throw new AuthenticationError('Invalid password');
+    }
+
+    return id;
   }
 }
 
