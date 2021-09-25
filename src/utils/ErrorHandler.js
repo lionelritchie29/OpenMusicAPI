@@ -12,6 +12,8 @@ const ErrorHandler = {
         error.statusCode,
       );
     }
+
+    console.log(error);
     const errorCode = error && error.output ? error.output.statusCode : 500;
     return ResponseCreator.createResponseWithMessage(
       h,
