@@ -13,7 +13,6 @@ class SongsService {
     this.deleteSongByIdHandler = this.deleteSongByIdHandler.bind(this);
   }
 
-  // eslint-disable-next-line class-methods-use-this
   async postSongHandler({ payload }, h) {
     this._validator.validate(payload);
     const id = await this._service.addSong(payload);

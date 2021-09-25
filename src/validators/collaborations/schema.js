@@ -5,4 +5,9 @@ const PostCollaborationsSchema = Joi.object({
   userId: Joi.string().required(),
 });
 
-module.exports = { PostCollaborationsSchema };
+const DeleteCollaborationsSchema = Joi.object({
+  playlistId: Joi.string().required(),
+  userId: Joi.string().required(),
+});
+
+module.exports = { PostCollaborationsSchema, DeleteCollaborationsSchema };

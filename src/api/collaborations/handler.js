@@ -33,6 +33,8 @@ class CollaborationsHandler {
   }
 
   async deleteCollaborationsHandler({ payload, auth }, h) {
+    this._validator.validateDeleteCollaborationsSchema(payload);
+
     const { id: ownerUserId } = auth.credentials;
     const { playlistId, userId: collaboratorUserId } = payload;
 

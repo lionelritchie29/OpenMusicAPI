@@ -4,7 +4,6 @@ const ResponseMessage = require('./ResponseMessage');
 
 const ErrorHandler = {
   handleError: (h, error) => {
-    console.log(error);
     if (error instanceof ClientError) {
       return ResponseCreator.createResponseWithMessage(
         h,
