@@ -9,8 +9,10 @@ class PlaylistsHandler {
 
     this.postPlaylistsHandler = this.postPlaylistsHandler.bind(this);
     this.getPlaylistsHandler = this.getPlaylistsHandler.bind(this);
+    this.deletePlaylistsHandler = this.deletePlaylistsHandler.bind(this);
     this.postPlaylistSongHandler = this.postPlaylistSongHandler.bind(this);
     this.getPlaylistSongHandler = this.getPlaylistSongHandler.bind(this);
+    this.deletePlaylistSongHandler = this.deletePlaylistSongHandler.bind(this);
   }
 
   async postPlaylistsHandler({ payload, auth }, h) {
@@ -37,6 +39,20 @@ class PlaylistsHandler {
     });
   }
 
+  async deletePlaylistsHandler({ params, auth }, h) {
+    const { playlistId } = params;
+    const { id: userId } = auth.credentials;
+
+    await this._playlistsService.verifyPlaylistOwner(playlistId, userId);
+    await this._playlistsService.deletePlaylistById(playlistId);
+
+    return ResponseCreator.createResponseWithMessage(
+      h,
+      ResponseMessage.success,
+      'Playlist berhasil dihapus',
+    );
+  }
+
   async postPlaylistSongHandler({ payload, params, auth }, h) {
     this._validator.validatePostPlaylistSongPayload(payload);
 
@@ -45,7 +61,7 @@ class PlaylistsHandler {
     const { songId } = payload;
 
     await this._playlistsService.verifyPlaylistOwner(playlistId, userId);
-    await this._songsService.getSongById(songId);
+    await this._songsService.verifySongExists(songId);
     await this._playlistsService.addSongToPlaylist(playlistId, songId);
 
     return ResponseCreator.createResponseWithMessage(
@@ -66,6 +82,24 @@ class PlaylistsHandler {
     return ResponseCreator.createResponseWithData(h, ResponseMessage.success, {
       songs,
     });
+  }
+
+  async deletePlaylistSongHandler({ payload, params, auth }, h) {
+    this._validator.validatePostPlaylistSongPayload(payload);
+
+    const { playlistId } = params;
+    const { id: userId } = auth.credentials;
+    const { songId } = payload;
+
+    await this._playlistsService.verifyPlaylistOwner(playlistId, userId);
+    await this._songsService.verifySongExists(songId);
+    await this._playlistsService.deleteSongFromPlaylist(playlistId, songId);
+
+    return ResponseCreator.createResponseWithMessage(
+      h,
+      ResponseMessage.success,
+      'Lagu berhasil dihapus dari playlist',
+    );
   }
 }
 

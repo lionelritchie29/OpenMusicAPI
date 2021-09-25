@@ -86,6 +86,19 @@ class SongsService {
       throw new NotFoundError('Error when deleting song. Song Id not found');
     }
   }
+
+  async verifySongExists(id) {
+    const query = {
+      text: 'SELECT * FROM songs WHERE id = $1',
+      values: [id],
+    };
+
+    const { rowCount } = await this._pool.query(query);
+
+    if (!rowCount) {
+      throw new BadRequestError('Song does not exist');
+    }
+  }
 }
 
 module.exports = SongsService;

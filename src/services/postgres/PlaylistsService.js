@@ -33,6 +33,18 @@ class PlaylistsService {
     return rows;
   }
 
+  async deletePlaylistById(id) {
+    const query = {
+      text: 'DELETE FROM playlists WHERE id = $1',
+      values: [id],
+    };
+
+    const { rowCount } = await this._pool.query(query);
+    if (!rowCount) {
+      throw new BadRequestError('Failed when deleting playlist');
+    }
+  }
+
   async verifyPlaylistOwner(playlistId, userId) {
     const query = {
       text: 'SELECT * FROM playlists WHERE id = $1 AND owner = $2',
@@ -58,6 +70,18 @@ class PlaylistsService {
     const { rowCount } = await this._pool.query(query);
     if (!rowCount) {
       throw new BadRequestError('Failed when adding song to the playlist.');
+    }
+  }
+
+  async deleteSongFromPlaylist(playlistId, songId) {
+    const query = {
+      text: 'DELETE FROM playlistsongs WHERE playlist_id = $1 AND song_id = $2',
+      values: [playlistId, songId],
+    };
+
+    const { rowCount } = await this._pool.query(query);
+    if (!rowCount) {
+      throw new BadRequestError('Failed when deleting song from playlist');
     }
   }
 }
