@@ -21,7 +21,7 @@ class UsersService {
 
     const { rows } = await this._pool.query(query);
 
-    if (!rows || rows.length === 0) {
+    if (!rows.length === 0 || !rows[0].id) {
       throw new BadRequestError('Failed when adding new user');
     }
 

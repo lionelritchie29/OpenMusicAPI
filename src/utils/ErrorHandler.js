@@ -12,12 +12,12 @@ const ErrorHandler = {
         error.statusCode,
       );
     }
-
+    const errorCode = error && error.output ? error.output.statusCode : 500;
     return ResponseCreator.createResponseWithMessage(
       h,
       ResponseMessage.error,
       error.message,
-      500,
+      errorCode,
     );
   },
 };
