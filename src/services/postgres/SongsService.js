@@ -49,6 +49,16 @@ class SongsService {
     return rows[0];
   }
 
+  async getSongByPlaylistId(playlistId) {
+    const query = {
+      text: 'SELECT songs.id, title, performer FROM songs JOIN playlistsongs ON songs.id = playlistsongs.song_id WHERE playlist_id = $1',
+      values: [playlistId],
+    };
+
+    const { rows } = await this._pool.query(query);
+    return rows;
+  }
+
   async updateSongById(id, { title, year, performer, genre, duration }) {
     const updatedAt = new Date().toISOString();
 
