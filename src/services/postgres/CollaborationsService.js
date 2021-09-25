@@ -25,9 +25,21 @@ class CollaborationsService {
     return rows[0].id;
   }
 
+  async deleteCollaborator(playlistId, collaboratorUserId) {
+    const query = {
+      text: 'DELETE FROM collaborations WHERE playlist_id = $1 AND user_id = $2',
+      values: [playlistId, collaboratorUserId],
+    };
+
+    const { rowCount } = await this._pool.query(query);
+    if (!rowCount) {
+      throw new BadRequestError('Failed when removing collaborator');
+    }
+  }
+
   async verifyCollaborator(playlistId, collaboratorUserId) {
     const query = {
-      text: 'SELECT * FROM collaboratos WHERE playlist_id = $1 AND user_id = $2',
+      text: 'SELECT * FROM collaborations WHERE playlist_id = $1 AND user_id = $2',
       values: [playlistId, collaboratorUserId],
     };
 

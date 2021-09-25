@@ -67,7 +67,7 @@ class PlaylistsService {
     try {
       await this.verifyPlaylistOwner(playlistId, userId);
     } catch (error) {
-      this._collabService.verifyCollaborator(playlistId, userId);
+      await this._collabService.verifyCollaborator(playlistId, userId);
     }
   }
 

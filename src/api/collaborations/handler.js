@@ -8,6 +8,7 @@ class CollaborationsHandler {
     this._validator = validator;
 
     this.postCollaborationsHandler = this.postCollaborationsHandler.bind(this);
+    this.deleteCollaborationsHandler = this.deleteCollaborationsHandler.bind(this);
   }
 
   async postCollaborationsHandler({ payload, auth }, h) {
@@ -15,7 +16,7 @@ class CollaborationsHandler {
 
     const { playlistId, userId: collaboratorUserId } = payload;
     const { id: ownerUserId } = auth.credentials;
-    this._playlistsService.verifyPlaylistOwner(playlistId, ownerUserId);
+    await this._playlistsService.verifyPlaylistOwner(playlistId, ownerUserId);
 
     const id = await this._collaborationsService.addCollaborator(
       playlistId,
@@ -28,6 +29,23 @@ class CollaborationsHandler {
       'Kolaborasi berhasil ditambahkan',
       { collaborationId: id },
       201,
+    );
+  }
+
+  async deleteCollaborationsHandler({ payload, auth }, h) {
+    const { id: ownerUserId } = auth.credentials;
+    const { playlistId, userId: collaboratorUserId } = payload;
+
+    await this._playlistsService.verifyPlaylistOwner(playlistId, ownerUserId);
+    await this._collaborationsService.deleteCollaborator(
+      playlistId,
+      collaboratorUserId,
+    );
+
+    return ResponseCreator.createResponseWithMessage(
+      h,
+      ResponseMessage.success,
+      'Kolaborasi berhasil dihapus',
     );
   }
 }
