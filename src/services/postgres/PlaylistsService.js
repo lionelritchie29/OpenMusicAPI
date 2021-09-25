@@ -4,8 +4,9 @@ const AuthorizationError = require('../../exceptions/AuthorizationError');
 const BadRequestError = require('../../exceptions/BadRequestError');
 
 class PlaylistsService {
-  constructor() {
+  constructor(collabService) {
     this._pool = new Pool();
+    this._collabService = collabService;
   }
 
   async addPlaylist(name, ownerUserId) {
@@ -25,7 +26,10 @@ class PlaylistsService {
 
   async getPlaylistsByUserId(userId) {
     const query = {
-      text: 'SELECT playlists.id, name, username FROM playlists JOIN users ON users.id = playlists.owner WHERE owner = $1',
+      text: `SELECT playlists.id, name, username FROM playlists 
+            LEFT JOIN users ON users.id = playlists.owner 
+            LEFT JOIN collaborations ON collaborations.playlist_id = playlists.id 
+            WHERE owner = $1 OR collaborations.user_id = $1 GROUP BY playlists.id, name, username`,
       values: [userId],
     };
 
@@ -56,6 +60,14 @@ class PlaylistsService {
       throw new AuthorizationError(
         'The playlist does not belong to the specified user',
       );
+    }
+  }
+
+  async verifyPlaylistAccess(playlistId, userId) {
+    try {
+      await this.verifyPlaylistOwner(playlistId, userId);
+    } catch (error) {
+      this._collabService.verifyCollaborator(playlistId, userId);
     }
   }
 
