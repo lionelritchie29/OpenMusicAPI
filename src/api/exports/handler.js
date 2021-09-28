@@ -8,8 +8,7 @@ class ExportPlaylistsHandler {
     this._validator = validator;
     this._queue = 'exports:playlist';
 
-    this.postExportPlaylistsHandler =
-      this.postExportPlaylistsHandler.bind(this);
+    this.postExportPlaylistsHandler = this.postExportPlaylistsHandler.bind(this);
   }
 
   async postExportPlaylistsHandler({ payload, auth, params }, h) {
