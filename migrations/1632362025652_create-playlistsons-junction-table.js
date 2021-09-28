@@ -1,7 +1,3 @@
-/* eslint-disable linebreak-style */
-/* eslint-disable camelcase */
-
-exports.shorthands = undefined;
 const TABLE_NAME = 'playlistsongs';
 const FK_PLAYLISTSONGS_PLAYLIST_ID = 'fk_playlistsongs.playlist_id';
 const FK_PLAYLISTSONGS_SONG_ID = 'fk_playlistsongs.song_id';

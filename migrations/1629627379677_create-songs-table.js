@@ -1,5 +1,3 @@
-/* eslint-disable linebreak-style */
-
 const TABLE_NAME = 'songs';
 
 exports.up = (pgm) => {

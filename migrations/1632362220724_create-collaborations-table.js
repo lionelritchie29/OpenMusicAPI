@@ -1,7 +1,3 @@
-/* eslint-disable linebreak-style */
-/* eslint-disable camelcase */
-
-exports.shorthands = undefined;
 const TABLE_NAME = 'collaborations';
 const FK_COLLABORATIONS_PLAYLIST_ID = 'fk_collaborations.playlist_id';
 const FK_COLLABORATIONS_USER_ID = 'fk_collaborations.user_id';

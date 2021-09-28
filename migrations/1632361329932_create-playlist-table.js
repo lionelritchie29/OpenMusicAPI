@@ -1,7 +1,3 @@
-/* eslint-disable linebreak-style */
-/* eslint-disable camelcase */
-
-exports.shorthands = undefined;
 const TABLE_NAME = 'playlists';
 const FK_PLAYLISTS_OWNER = 'fk_playlists.owner';
 
