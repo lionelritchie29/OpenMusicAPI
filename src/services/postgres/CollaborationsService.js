@@ -2,10 +2,12 @@ const { nanoid } = require('nanoid');
 const { Pool } = require('pg');
 const AuthorizationError = require('../../exceptions/AuthorizationError');
 const BadRequestError = require('../../exceptions/BadRequestError');
+const StringUtils = require('../../utils/StringUtils');
 
 class CollaborationsService {
-  constructor() {
+  constructor(cacheService) {
     this._pool = new Pool();
+    this._cacheService = cacheService;
   }
 
   async addCollaborator(playlistId, collaboratorUserId) {
@@ -35,6 +37,9 @@ class CollaborationsService {
     if (!rowCount) {
       throw new BadRequestError('Failed when removing collaborator');
     }
+
+    const cacheKey = StringUtils.getPlaylistCacheKey(collaboratorUserId);
+    await this._cacheService.delete(cacheKey);
   }
 
   async verifyCollaborator(playlistId, collaboratorUserId) {

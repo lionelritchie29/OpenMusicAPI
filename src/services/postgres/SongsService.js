@@ -2,10 +2,12 @@ const { nanoid } = require('nanoid');
 const { Pool } = require('pg');
 const BadRequestError = require('../../exceptions/BadRequestError');
 const NotFoundError = require('../../exceptions/NotFoundError');
+const StringUtils = require('../../utils/StringUtils');
 
 class SongsService {
-  constructor() {
+  constructor(cacheService) {
     this._pool = new Pool();
+    this._cacheService = cacheService;
   }
 
   async addSong({ title, year, performer, genre, duration }) {
@@ -52,13 +54,21 @@ class SongsService {
   }
 
   async getSongByPlaylistId(playlistId) {
-    const query = {
-      text: 'SELECT songs.id, title, performer FROM songs JOIN playlistsongs ON songs.id = playlistsongs.song_id WHERE playlist_id = $1',
-      values: [playlistId],
-    };
+    const cacheKey = StringUtils.getPlaylistSongCacheKey(playlistId);
 
-    const { rows } = await this._pool.query(query);
-    return rows;
+    try {
+      const songs = await this._cacheService.get(cacheKey);
+      return JSON.parse(songs);
+    } catch (error) {
+      const query = {
+        text: 'SELECT songs.id, title, performer FROM songs JOIN playlistsongs ON songs.id = playlistsongs.song_id WHERE playlist_id = $1',
+        values: [playlistId],
+      };
+
+      const { rows } = await this._pool.query(query);
+      await this._cacheService.set(cacheKey, JSON.stringify(rows));
+      return rows;
+    }
   }
 
   async updateSongById(id, { title, year, performer, genre, duration }) {
